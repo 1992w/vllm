@@ -25,7 +25,7 @@ WORKDIR /vllm
 COPY . .
 
 # This is slow as balls
-RUN python3 -m pip wheel .[flash-attn] -w /tmp/wheels
+RUN python3 -m pip wheel . -w /tmp/wheels
 
 # ---------- Runtime stage ----------
 FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
