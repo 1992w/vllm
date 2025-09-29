@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file docker/Dockerfile --tag vllm-openai:v0.9.1-cu124
+      run: docker build . --file docker/Dockerfile1 --tag vllm-openai:v0.9.1-cu124
