@@ -6,7 +6,7 @@ ENV MAX_JOBS=8
 ENV PIP_NO_BUILD_ISOLATION=1
 
 #Replace this with the compute capability for your GPU's
-ENV TORCH_CUDA_ARCH_LIST='7.0 7.5 8.0 8.9 9.0 10.0+PTX'
+ENV TORCH_CUDA_ARCH_LIST=8.6
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -18,17 +18,14 @@ RUN python3 -m pip install --extra-index-url https://download.pytorch.org/whl/cu
     torch==2.6.0+cu124 torchvision==0.21.0+cu124
 
 # Clone vLLM and build wheel
-#RUN git clone --branch v0.9.2 https://github.com/vllm-project/vllm.git /vllm
+RUN git clone --branch v0.9.2 https://github.com/vllm-project/vllm.git /vllm
 
 WORKDIR /vllm
 
-COPY . .
-
 # This is slow as balls
-RUN python3 -m pip wheel . -w /tmp/wheels
+RUN python3 -m pip wheel .[flash-attn] -w /tmp/wheels
 
-# ---------- Runtime stage ----------
-FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV PYTHONUNBUFFERED=1
 ENV NVIDIA_VISIBLE_DEVICES=all
@@ -44,5 +41,7 @@ RUN apt-get update && \
 
 COPY --from=build /tmp/wheels /tmp/wheels
 RUN python3 -m pip install --no-cache-dir /tmp/wheels/vllm-*.whl
+
+RUN python3 -m pip  install -i  flash_attn==2.8.0.post2
 
 ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
