@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: ["v*"]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build the Docker image
+      run: |
+        DOCKER_BUILDKIT=1 docker build . \
+          --build-arg CUDA_VERSION=12.4.1 \
+          --build-arg GDRCOPY_CUDA_VERSION=12.4 \
+          --target vllm-openai \
+          --tag ghcr.io/1992w/vllm/vllm-openai:v0.12.0-cu124 \
+          --file docker/Dockerfile
+          
+    - name: Push Image to GHCR
+      run: docker push -a ghcr.io/1992w/vllm/vllm-openai:v0.12.0-cu124
