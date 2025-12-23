@@ -5,7 +5,7 @@
 # docs/contributing/dockerfile/dockerfile.md and
 # docs/assets/contributing/dockerfile-stages-dependency.png
 
-ARG CUDA_VERSION=12.9.1
+ARG CUDA_VERSION=12.4.1
 ARG PYTHON_VERSION=3.12
 
 # By parameterizing the base images, we allow third-party to use their own
@@ -303,7 +303,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG TARGETPLATFORM
 
 # TODO (huydhn): There is no prebuilt gdrcopy package on 12.9 at the moment
-ARG GDRCOPY_CUDA_VERSION=12.8
+ARG GDRCOPY_CUDA_VERSION=12.4
 # Keep in line with FINAL_BASE_IMAGE
 ARG GDRCOPY_OS_VERSION=Ubuntu22_04
 
